@@ -1,0 +1,4 @@
+output_plots/
+*.png
+__pycache__/
+*.ipynb_checkpoints/
