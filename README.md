@@ -264,37 +264,6 @@ All key parameters are defined at the top of each section for easy modification:
 
 ---
 
-## 💬 Expected Interview / Viva Questions & Answers
-
-### Q1: What is FFT and why is it useful in signal analysis?
-**A:** FFT (Fast Fourier Transform) is an efficient algorithm to compute the Discrete Fourier Transform. It converts a time-domain signal into its constituent frequency components. In device characterisation, this helps identify which frequencies carry real device information versus which are noise — noise typically shows up as a broad elevated floor across all frequencies, while signal components appear as sharp peaks.
-
-### Q2: Why use a Butterworth filter specifically?
-**A:** Butterworth filters are called "maximally flat" filters — they have no ripple in the passband, meaning frequencies below the cutoff are passed with minimal distortion. For scientific measurement data where signal amplitude accuracy matters, ripple-free response is important. Other filters like Chebyshev have steeper roll-off but introduce passband ripple, which can distort the signal we want to preserve.
-
-### Q3: What does SNR improvement of ~93% mean physically?
-**A:** SNR (Signal-to-Noise Ratio) in dB = 10·log10(signal power / noise power). An improvement from 7.42 dB to 14.37 dB means the ratio of signal power to noise power roughly doubled. The 93% improvement figure is the relative percentage change in SNR value. In practice, this means the filtered signal is significantly easier to analyse — peaks are sharper, baselines are flatter, and extracted device parameters (like Voc or dominant frequency) will be more accurate.
-
-### Q4: What is Fill Factor and why does it matter?
-**A:** Fill Factor (FF) = Pmax / (Voc × Jsc). Geometrically, it's the ratio of the actual maximum power rectangle to the ideal rectangle defined by Voc and Jsc. It reflects internal resistances and recombination losses in a device. A perfect device would have FF = 1. Real thin-film devices typically range from 0.60–0.80. Higher FF means more of the device's theoretical maximum power is actually extracted.
-
-### Q5: What is the significance of the Nyquist frequency?
-**A:** Nyquist theorem states that to accurately represent a frequency f in digital data, the sampling rate must be at least 2f. With fs = 1000 Hz, the Nyquist limit is 500 Hz — no frequency above 500 Hz can be reliably detected. If a real signal has components above this limit, aliasing occurs: high-frequency content folds back into lower frequencies and appears as phantom peaks. In our case, setting fs = 1000 Hz is safe because our highest signal component is 120 Hz.
-
-### Q6: Why does the I-V curve drop to zero current at Voc?
-**A:** At open-circuit (no current flowing), the photogenerated current exactly equals the dark recombination current. The built-in electric field that separates electron-hole pairs is fully counterbalanced by the forward bias voltage Voc. Beyond Voc, recombination dominates and current reverses direction, which is why the curve goes negative — a physical device can't sustain this and the power output drops to zero.
-
-### Q7: How would this analysis change with real experimental data?
-**A:** Real I-V data would include series resistance (Rs) effects that cause the curve to slope inward at high voltages, and shunt resistance (Rsh) effects that cause leakage at low voltages. The single-diode model used here is simplified. For real data, we'd fit the full diode equation: J = Jsc - J0·(exp((V+J·Rs)/(n·Vt)) - 1) - (V+J·Rs)/Rsh using scipy.optimize.curve_fit to extract Rs, Rsh, J0, and ideality factor n.
-
-### Q8: What does THD (Total Harmonic Distortion) tell us?
-**A:** THD measures how much power is in harmonic frequencies (2f, 3f, 4f...) relative to the fundamental frequency. In a pure sine wave, THD = 0%. In our noisy signal, THD is higher because noise energy bleeds into harmonic frequency bins. After filtering, THD drops because high-frequency harmonics are suppressed. In device characterisation, high THD in a lock-in measurement can indicate nonlinear device behaviour or measurement system distortion.
-
-### Q9: Can this code be adapted for real lab measurement data?
-**A:** Yes — Section 7 of the notebook shows how to load any CSV file with two columns (time, signal) or (voltage, current). The `apply_fft()`, `lowpass_filter()`, and `detect_peaks()` functions work on any 1D NumPy array. For real I-V data, you would replace `generate_iv_data()` with `load_custom_csv()` and run the same curve-fitting pipeline. The only modification needed is adjusting `FS` to match your actual data acquisition sampling rate.
-
-### Q10: What is the physical relevance of photocurrent signal analysis?
-**A:** In a photodetector or solar cell under illumination, the photocurrent contains information about carrier generation, transport, and recombination dynamics. Frequency analysis of photocurrent — especially techniques like Intensity-Modulated Photocurrent Spectroscopy (IMPS) — reveals time constants related to charge transport and recombination. The FFT approach here is a simplified version of that: it identifies which frequencies dominate the response, which informs device physics interpretation.
 
 ---
 
